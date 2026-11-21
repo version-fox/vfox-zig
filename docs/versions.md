@@ -13,7 +13,7 @@ The plugin reads two indexes:
 | Zig's | https://ziglang.org/download/index.json | yes: the official releases and `master`, the nightly |
 | Mach's | https://machengine.org/zig/index.json | no: the builds that the Mach project names |
 
-`vfox search zig`, `vfox install` and `vfox use` read both. Mach's index is optional: when it cannot be read, the plugin prints a warning and lists the official releases alone, so an outage of one index does not stop the other from working.
+`vfox search zig` and `vfox install` read both, and `vfox use` reads them only for a name that is neither an installed version nor a number (see [`vfox use`](#vfox-use)). Mach's index is optional: when it cannot be read, the plugin prints a warning and lists the official releases alone, so an outage of one index does not stop the other from working.
 
 ## Names
 
@@ -31,14 +31,14 @@ Names are matched exactly. A version installs under its own version, so `vfox in
 
 `vfox search zig` prints the official releases first, newest first, and then the development builds, newest first. vfox takes the first line as the latest version for `zig@latest`, so the order is what makes `latest` the newest release and not the newest nightly.
 
-Versions compare as semantic versions do: `0.17.1` comes before `0.17.0`, and a development build such as `0.17.0-dev.2228+955228b68` comes before its release `0.17.0`.
+Versions compare as semantic versions do: `0.17.1` is newer than `0.17.0`, and a development build such as `0.17.0-dev.2228+955228b68` is older than its release `0.17.0`.
 
 The note on each line gives the names the build has, separated by commas. One build can have several names, as the Mach builds do:
 
 ```
+0.17.1                     latest
 0.18.0-dev.1260+833623422  nightly
 0.18.0-dev.935+ead8f5a7a   2026.10.22-mach, mach-latest
-0.17.1                     latest
 ```
 
 ## Downloads and checksums
@@ -65,7 +65,7 @@ Every download is checked against the SHA-256 that the index lists for it. vfox 
 
 - a version that is installed, such as `zig@0.13.0`, or a bare or dotted number such as `zig@0.13`, which vfox matches against the installed versions itself.
 
-The other names, `latest`, `nightly` and the Mach names, are looked up in the index, so `vfox use` needs the network for them. The version each one names is selected when it is installed. If it is not installed, vfox reports it as not installed, and `vfox install` installs it.
+The other names, `latest`, `nightly` and the Mach names, are looked up in the index, so `vfox use` needs the network for them. Once the version a name refers to is installed, `vfox use` selects it. Until then vfox reports the name as not installed, and `vfox install` installs it.
 
 ## Platforms
 
@@ -88,4 +88,4 @@ The plugin looks each platform up by the names the index uses. The table gives t
 | windows/arm64 | `aarch64-windows` |
 | windows/386 | `x86-windows`, `i386-windows` |
 
-A platform that is not in the table is looked up under its own Go name. Those names are in `lib/util.lua` (`arch_names`), and `tests/util_test.lua` checks them.
+A platform that is not in the table is looked up under its own Go name. The names that differ from the Go ones are in `arch_names` in `lib/util.lua`, and `tests/util_test.lua` checks them.

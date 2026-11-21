@@ -6,7 +6,7 @@ vfox-zig 是 [vfox](https://vfox.dev/) 的 [Zig](https://ziglang.org/) 插件。
 
 ## 安装
 
-先安装 vfox。`vfox link --detect zig` 需要 vfox 1.1.0 或更新的版本（用 `vfox --version` 查看）；其它命令在更早的版本上也能用。然后添加插件：
+先安装 vfox。`vfox link --detect zig` 需要 vfox 1.1.0 或更新的版本（用 `vfox --version` 查看），插件的检查也使用 vfox 1.1.0 运行。然后添加插件：
 
 ```bash
 vfox add zig
@@ -42,7 +42,7 @@ vfox link --detect -y zig        # 不询问，全部链接
 | `nightly` | ziglang.org 上 Zig 的 master 构建，即最新的开发版 |
 | `2024.11.0-mach`、`mach-latest` 等 | Mach 项目命名的开发版 |
 
-`vfox search zig` 先列正式版（从新到旧），再列开发版（从新到旧）。每行的备注写出它的名字，例如 `latest`，或 `nightly, mach-latest`。细节和数据来源见 [docs/zh-CN/versions.md](docs/zh-CN/versions.md)。
+`vfox search zig` 先列正式版（从新到旧），再列开发版（从新到旧）。每行的备注写出它的名字，例如 `latest`，或 `2026.10.22-mach, mach-latest`。细节和数据来源见 [docs/zh-CN/versions.md](docs/zh-CN/versions.md)。
 
 ## 平台
 
@@ -58,9 +58,9 @@ vfox link --detect -y zig        # 不询问，全部链接
 
 ## 发布这个插件
 
-维护者可以在默认分支上进入 **Actions → Plugin → Run workflow**，输入不带 `v` 前缀的稳定插件版本号来发布。共享工作流会更新 `metadata.lua`、创建版本提交和标签，并在本仓库发布 ZIP 与 manifest。不需要本地标签，也不需要额外的发布令牌。拉取请求只运行检查；PR 标题不再触发发布。
+维护者可以在默认分支上进入 **Actions → Plugin → Run workflow**，输入不带 `v` 前缀的稳定插件版本号来发布。共享工作流会更新 `metadata.lua`、创建版本提交和标签，并在本仓库发布 ZIP 与 manifest。不需要本地标签，也不需要额外的发布令牌。拉取请求只运行检查，PR 标题不会触发发布。
 
-当 `PLUGIN.version` 与标签一致时，也可以直接推送版本标签来发布。发布失败时，重新运行失败的原任务即可继续。
+当 `PLUGIN.version` 与标签一致时，推送版本标签也会发布。发布失败时，重新运行失败的任务即可继续。
 
 工作流跟随共享的 `@v1` 发布工具版本；更新工具不会发布本插件。包的约定和首次上线要求见 [共享工作流文档](https://github.com/version-fox/plugin-manifest-action)。发布之后的步骤见 [docs/zh-CN/development.md](docs/zh-CN/development.md#发布之后)。
 

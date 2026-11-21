@@ -6,7 +6,7 @@ vfox-zig is a [vfox](https://vfox.dev/) plugin for the [Zig](https://ziglang.org
 
 ## Install
 
-Install vfox first. `vfox link --detect zig` needs vfox 1.1.0 or later (`vfox --version` shows yours); the other commands work with earlier versions. Then add the plugin:
+Install vfox first. `vfox link --detect zig` needs vfox 1.1.0 or later (`vfox --version` shows yours), and the plugin's checks run with vfox 1.1.0. Then add the plugin:
 
 ```bash
 vfox add zig
@@ -42,7 +42,7 @@ See [docs/link.md](docs/link.md).
 | `nightly` | the master build of Zig on ziglang.org, the newest development build |
 | `2024.11.0-mach`, `mach-latest`, ... | a development build that the Mach project names |
 
-`vfox search zig` lists the releases first, newest first, then the development builds, newest first. The note on each line gives its names, such as `latest` or `nightly, mach-latest`. The details, and where the data comes from, are in [docs/versions.md](docs/versions.md).
+`vfox search zig` lists the releases first, newest first, then the development builds, newest first. The note on each line gives its names, such as `latest` or `2026.10.22-mach, mach-latest`. The details, and where the data comes from, are in [docs/versions.md](docs/versions.md).
 
 ## Platforms
 
@@ -62,10 +62,10 @@ Maintainers can publish from **Actions → Plugin → Run workflow** on the defa
 branch by entering a stable plugin version without the `v` prefix. The shared
 workflow updates `metadata.lua`, creates the version commit and tag, and publishes
 the ZIP and manifest in this repository. No local tag or extra release token is
-needed. Pull requests run checks only; PR titles no longer trigger publication.
+needed. Pull requests run checks only, and their titles do not trigger a release.
 
-Existing version-tag pushes are supported when `PLUGIN.version` already matches
-the tag. If publication fails, re-run the original failed job to resume it.
+Pushing a version tag also publishes when `PLUGIN.version` already matches
+the tag. If publication fails, re-run the failed job to resume it.
 
 The workflow follows the shared `@v1` release-tool version. Updating the tool does
 not release this plugin. See the [shared workflow documentation](https://github.com/version-fox/plugin-manifest-action)

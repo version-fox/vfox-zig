@@ -89,7 +89,7 @@ Go 代码由 `gofmt` 和 `go vet` 检查；`GOOS=windows go vet` 同时编译测
 
 ## 更新日志
 
-`docs/changes.md` 和 `docs/zh-CN/changes.md` 描述对用户可见的变化，在发布之前列在 `Unreleased` 下。行为变化、修复或新增的 hook 都要在两种语言中列出。
+`docs/changes.md` 和 `docs/zh-CN/changes.md` 描述对用户可见的变化。行为变化、修复或新增的 hook 都要在两种语言中列出，放在文件顶部的 `## Unreleased`（未发布）标题下；发布时，该标题改为版本号（见 [发布之后](#发布之后)）。
 
 ## 发布
 
@@ -101,5 +101,5 @@ Go 代码由 `gofmt` 和 `go vet` 检查；`GOOS=windows go vet` 同时编译测
 
 文档用 "未发布"（英文为 Unreleased）标记比上一个发布更新的内容。发布之后：
 
-1. 把这些条目移到 [changes.md](changes.md) 中新版本的下方（中英文都要改），并写上发布日期，同时删去备注：`grep -rn -i -e unreleased -e 未发布 docs README*`。
+1. 把这些条目移到 [changes.md](changes.md) 中新版本的标题下（中英文都要改），标题写上发布日期（如 `## 0.1.2（2026-11-21）`），并删去 `Unreleased` / `未发布` 标题。`grep -rn -i -e unreleased -e 未发布 docs README*` 用来查找仍有标记的地方；移动之后，只有这两个页面中的说明会匹配。
 2. 刷新 `tests/fixtures/index/README.md` 中索引副本的日期时，同步检查 [versions.md](versions.md) 中的示例。

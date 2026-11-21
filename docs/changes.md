@@ -4,7 +4,7 @@
 
 What changed in each release, as a user notices it. GitHub's release pages list the commits.
 
-## Unreleased
+## 0.1.2 (2026-11-21)
 
 - `vfox link --detect zig` links the Zig installs that are already on the machine: those on `PATH`, in the version managers (mise, asdf, zvm, Scoop) and in the system directories. It needs vfox 1.1.0 or later. See [link.md](link.md).
 - `vfox install zig@latest` installs the newest official release. Before, it installed the newest nightly: vfox takes the first version of `vfox search zig` as the latest, and the nightly was first. Official releases are now listed first, newest first, then the development builds. See [versions.md](versions.md#the-list-and-its-order).
