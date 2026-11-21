@@ -76,18 +76,22 @@ io.open = function(path, mode)
     return nil
 end
 
+-- The handle has read and close only, as vfox's io.popen on Windows does. A
+-- detection that calls handle:lines() fails here, as it would on Windows.
 io.popen = function(command)
-    local lines = answer(command)
-    local index = 0
+    local output = table.concat(answer(command), "\n")
+    local delivered = false
     return {
-        lines = function()
-            return function()
-                index = index + 1
-                return lines[index]
+        read = function(_, format)
+            assert(format == "*a", 'only read("*a") is supported, got ' .. tostring(format))
+            if delivered then
+                return ""
             end
+            delivered = true
+            return output
         end,
         close = function()
-            return true
+            return 0
         end,
     }
 end

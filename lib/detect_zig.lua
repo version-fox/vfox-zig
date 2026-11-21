@@ -66,17 +66,20 @@ local function quote(value)
     return "'" .. (value:gsub("'", "'\\''")) .. "'"
 end
 
---- Runs a command and returns its output lines, or {} when it cannot run.
+--- Runs a command and returns its output lines, or {} when it cannot run. The
+--- output is read with read("*a"): vfox's io.popen on Windows returns a handle
+--- that has read and close, and no lines, so handle:lines() fails there.
 local function lines_of(command)
     local handle = io.popen(command, "r")
     if not handle then
         return {}
     end
+    local output = handle:read("*a") or ""
+    handle:close()
     local lines = {}
-    for line in handle:lines() do
+    for line in output:gmatch("[^\r\n]+") do
         table.insert(lines, line)
     end
-    handle:close()
     return lines
 end
 
@@ -112,10 +115,21 @@ function detect.list_children(dir)
     return children
 end
 
+--- The command line that prints the version of an executable. On Windows the line
+--- runs in cmd.exe, which strips one pair of quotes around the whole line when the
+--- line starts with a quote and holds more than two quotes. Wrapping the quoted
+--- path in one more pair makes that happen, so a path with spaces or parentheses
+--- (Program Files (x86)) still runs.
+local function version_command(executable_path)
+    if is_windows() then
+        return '"' .. quote(executable_path) .. ' version 2>nul"'
+    end
+    return quote(executable_path) .. " version 2>/dev/null"
+end
+
 --- Returns the version that `zig version` prints for an executable, or nil.
 local function version_of(executable_path)
-    local suffix = is_windows() and " 2>nul" or " 2>/dev/null"
-    for _, line in ipairs(lines_of(quote(executable_path) .. " version" .. suffix)) do
+    for _, line in ipairs(lines_of(version_command(executable_path))) do
         local version = trim(line)
         -- Release and development builds: 0.13.0, 0.14.0-dev.2577+271452d22.
         if version:match("^%d[%w%.%+%-]*$") then

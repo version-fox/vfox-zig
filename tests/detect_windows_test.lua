@@ -19,7 +19,7 @@ local plugin = test.load({
     env = {
         USERPROFILE = "C:\\Users\\u",
         ProgramFiles = "C:\\Program Files",
-        PATH = "C:\\Tools;C:\\Users\\u\\scoop\\shims;C:\\Users\\u\\.vfox\\cache\\zig\\v-0.12.0;C:\\Zig",
+        PATH = "C:\\Tools;C:\\Users\\u\\scoop\\shims;C:\\Users\\u\\.vfox\\cache\\zig\\v-0.12.0;C:\\Zig;C:\\Program Files (x86)\\Zig",
     },
 })
 
@@ -27,6 +27,8 @@ local plugin = test.load({
 local files = {}
 local children = {}
 local versions = {}
+-- Every command the detection runs, as cmd.exe receives it.
+local commands = {}
 
 local function norm(path)
     return (path:gsub("\\", "/"))
@@ -39,11 +41,14 @@ local function add_zig(dir, version)
 end
 
 local function answer(command)
+    table.insert(commands, command)
     local dir = command:match('^dir /b "(.-)" 2>nul$')
     if dir then
         return children[norm(dir)] or {}
     end
-    local binary = command:match('^"(.-)" version 2>nul$')
+    -- cmd.exe strips the outer pair of quotes, which the detection adds so
+    -- that a path with parentheses still runs.
+    local binary = command:match('^""(.-)" version 2>nul"$')
     if binary then
         local version = versions[norm(binary)]
         return version and { version } or {}
@@ -65,18 +70,22 @@ io.open = function(path, mode)
     return nil
 end
 
+-- The handle has read and close only, as vfox's io.popen on Windows does, and
+-- the output has CRLF line ends as cmd.exe writes it.
 io.popen = function(command)
-    local lines = answer(command)
-    local index = 0
+    local output = table.concat(answer(command), "\r\n")
+    local delivered = false
     return {
-        lines = function()
-            return function()
-                index = index + 1
-                return lines[index]
+        read = function(_, format)
+            assert(format == "*a", 'only read("*a") is supported, got ' .. tostring(format))
+            if delivered then
+                return ""
             end
+            delivered = true
+            return output
         end,
         close = function()
-            return true
+            return 0
         end,
     }
 end
@@ -87,6 +96,8 @@ add_zig("C:\\Users\\u\\scoop\\shims", "0.11.5")
 add_zig("C:\\Users\\u\\.vfox\\cache\\zig\\v-0.12.0", "0.12.0")
 -- Zig 0.14 development build on PATH.
 add_zig("C:\\Zig", "0.14.0-dev.1+abc123")
+-- A zig in a directory whose name has parentheses, which cmd.exe reads specially.
+add_zig("C:\\Program Files (x86)\\Zig", "0.9.0")
 
 -- Scoop: current and a version folder hold the same zig; the first listed wins.
 children[norm("C:\\Users\\u\\scoop\\apps\\zig")] = { "0.11.0", "current" }
@@ -102,6 +113,7 @@ for _, item in ipairs(found) do
     table.insert(lines, item.version .. " " .. item.path .. " (" .. item.note .. ")")
 end
 local expected = {
+    "0.9.0 C:\\Program Files (x86)\\Zig (on PATH)",
     "0.10.0 C:\\Program Files\\zig (system directory)",
     "0.11.0 C:\\Users\\u\\scoop\\apps\\zig\\0.11.0 (installed by Scoop)",
     "0.13.0 C:\\Tools (on PATH)",
@@ -114,5 +126,16 @@ assert(
 for i, line in ipairs(expected) do
     assert(lines[i] == line, ("installation %d: expected %s, got %s"):format(i, line, lines[i]))
 end
+
+-- The version of the zig in the parenthesized directory is asked with the outer
+-- pair of quotes that cmd.exe strips.
+local wanted = '""C:\\Program Files (x86)\\Zig\\zig.exe" version 2>nul"'
+local asked = false
+for _, command in ipairs(commands) do
+    if command == wanted then
+        asked = true
+    end
+end
+assert(asked, "the version command of the parenthesized zig, got none matching: " .. wanted)
 
 print("detect windows tests passed")

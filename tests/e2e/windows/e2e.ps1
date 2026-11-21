@@ -55,16 +55,44 @@ function Write-Pass([string] $Name) {
     Write-Output "PASS $Name"
 }
 
+# Invoke-Capture runs Program with Arguments and returns its exit code and the
+# text it wrote to standard output and to standard error. The two streams are
+# read separately, and in full, so a message on either one is kept: the
+# *>&1 merge that this script used before lost the message of a failing vfox
+# command on Windows.
+function Invoke-Capture([string] $Program, [string[]] $Arguments) {
+    $executable = (Get-Command -Name $Program -CommandType Application | Select-Object -First 1).Source
+    $startInfo = [System.Diagnostics.ProcessStartInfo]::new($executable)
+    foreach ($argument in $Arguments) {
+        $startInfo.ArgumentList.Add($argument)
+    }
+    $startInfo.UseShellExecute = $false
+    $startInfo.RedirectStandardOutput = $true
+    $startInfo.RedirectStandardError = $true
+    $process = [System.Diagnostics.Process]::Start($startInfo)
+    $stdout = $process.StandardOutput.ReadToEndAsync()
+    $stderr = $process.StandardError.ReadToEndAsync()
+    $process.WaitForExit()
+    return [pscustomobject]@{
+        Code   = $process.ExitCode
+        Stdout = $stdout.Result
+        Stderr = $stderr.Result
+    }
+}
+
 # Invoke-Native runs a command with its output in $Work\$Log. When the command
-# fails, it stops the script and shows that output.
+# fails, it stops the script and shows both streams.
 function Invoke-Native([string] $Log, [string] $Program, [string[]] $Arguments) {
-    $path = Join-Path $Work $Log
-    & $Program @Arguments *>&1 | Out-File -FilePath $path -Encoding utf8
-    $code = $LASTEXITCODE
-    $text = Get-Content -Path $path -Raw
-    if ($code -ne 0) {
-        Write-Output $text
-        throw "$Program $($Arguments -join ' ') failed with exit code $code"
+    $result = Invoke-Capture $Program $Arguments
+    $text = $result.Stdout + $result.Stderr
+    Set-Content -Path (Join-Path $Work $Log) -Value $text -Encoding utf8 -NoNewline
+    if ($result.Code -ne 0) {
+        Write-Output "--- $Program $($Arguments -join ' ') exited with $($result.Code) ---"
+        Write-Output '--- stdout ---'
+        Write-Output $result.Stdout
+        Write-Output '--- stderr ---'
+        Write-Output $result.Stderr
+        throw "$Program $($Arguments -join ' ') failed with exit code $($result.Code)"
     }
     return $text
 }
@@ -79,11 +107,12 @@ function Test-TextFound([string] $Label, [string] $Text, [string] $Needle) {
     Write-Pass $Label
 }
 
-# Test-CommandFailure passes when the command fails and says Needle.
+# Test-CommandFailure passes when the command fails and says Needle, on either
+# stream.
 function Test-CommandFailure([string] $Label, [string] $Needle, [string] $Program, [string[]] $Arguments) {
-    $text = & $Program @Arguments *>&1 | Out-String
-    $code = $LASTEXITCODE
-    if ($code -eq 0) {
+    $result = Invoke-Capture $Program $Arguments
+    $text = $result.Stdout + $result.Stderr
+    if ($result.Code -eq 0) {
         Write-Output '--- output ---'
         Write-Output $text
         throw "$Label`: the command should have failed"
@@ -121,6 +150,16 @@ try {
         throw "vfox 1.1.0 or later is needed for link --detect, found: $vfoxVersion"
     }
     Write-Pass "vfox $vfoxVersion is 1.1.0 or later"
+
+    Write-Step 'standard error is read'
+    # vfox writes this usage error to standard error alone, so the check fails if
+    # the output of standard error is lost.
+    $usage = Invoke-Capture 'vfox' @('link')
+    if ($usage.Code -eq 0) {
+        throw 'vfox link without arguments should fail'
+    }
+    Test-TextFound 'vfox link without arguments writes its usage to standard error' $usage.Stderr 'usage: vfox link'
+
     # vfox use needs the shell hook set up first, as an interactive shell has it.
     Invoke-VfoxShellCode 'activate', 'pwsh'
 
