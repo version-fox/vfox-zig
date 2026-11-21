@@ -2,7 +2,7 @@
 
 [中文](README_CN.md) | [English](README.md)
 
-vfox-zig is a [vfox](https://vfox.lhan.me/) plugin for the [Zig](https://ziglang.org/) programming language. It installs the official releases, Zig's nightly build, and the development builds that the [Mach](https://machengine.org/) project names. It also adopts a Zig that is already on the machine, instead of downloading another copy.
+vfox-zig is a [vfox](https://vfox.dev/) plugin for the [Zig](https://ziglang.org/) programming language. It installs the official releases, Zig's nightly build, and the development builds that the [Mach](https://machengine.org/) project names. It also adopts a Zig that is already on the machine, instead of downloading another copy.
 
 ## Install
 

@@ -2,7 +2,7 @@
 
 [中文](README_CN.md) | [English](README.md)
 
-vfox-zig 是 [vfox](https://vfox.lhan.me/) 的 [Zig](https://ziglang.org/) 插件。它可以安装 Zig 的正式版、每日构建（nightly），以及 [Mach](https://machengine.org/) 项目命名的开发版本。它还能直接纳入机器上已经装好的 Zig，不必再下载一份。
+vfox-zig 是 [vfox](https://vfox.dev/) 的 [Zig](https://ziglang.org/) 插件。它可以安装 Zig 的正式版、每日构建（nightly），以及 [Mach](https://machengine.org/) 项目命名的开发版本。它还能直接纳入机器上已经装好的 Zig，不必再下载一份。
 
 ## 安装
 
