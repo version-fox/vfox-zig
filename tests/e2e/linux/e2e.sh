@@ -116,6 +116,9 @@ check_vfox() {
     pass "vfox $found is 1.1.0 or later"
     # vfox use needs the shell hook set up first, as an interactive shell has it.
     eval "$(vfox activate bash)"
+    # The activation sets its own EXIT trap, which would replace the cleanup of the
+    # work directory: both run now.
+    trap 'vfox env --cleanup >/dev/null 2>&1 || true; cleanup' EXIT
 }
 
 add_plugin() {
