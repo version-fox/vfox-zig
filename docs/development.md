@@ -16,11 +16,11 @@ lib/util.lua                  the indexes, the names, the order and the platform
 lib/detect_zig.lua            finding zig installs by their executable and lib/std
 tests/*_test.lua              offline hook tests, run by vfox plugin test
 tests/fixtures/index/         copies of the two indexes the tests answer with
-tests/e2e/linux/              the Linux end-to-end checks and the Dockerfile to run them
-tests/e2e/windows/            the Windows end-to-end checks, in PowerShell
+tests/e2e/                    the end-to-end checks, one Go test for Linux and Windows
+tests/e2e/linux/Dockerfile    the image that runs them on Linux, in a container
 Injection.lua                 type hints for what vfox injects, never loaded
 stylua.toml, .luarc.json      formatting, and the Lua language server's settings
-.licenserc.yaml, .license.tpl license headers
+.licenserc.yaml               license headers
 opencode.jsonc                lets OpenCode agent sessions in this repository run git push, gh pr create and gh pr comment without asking
 README.md, docs/              the documentation; README_CN.md and docs/zh-CN/ are the Chinese version
 ```
@@ -71,16 +71,17 @@ Everything below runs in CI (`.github/workflows/lint.yml`, `license.yml`). The v
 ```bash
 stylua --check .                      # StyLua 2.5.2, stylua.toml
 lua-language-server --check . --checklevel=Warning   # LuaLS 3.19.1, .luarc.json
-shellcheck tests/e2e/linux/e2e.sh
+gofmt -l tests/e2e                    # Go: prints nothing when the files are formatted
+(cd tests/e2e && go vet ./... && GOOS=windows go vet ./...)   # Go: vet, for Linux and for Windows
 hadolint < tests/e2e/linux/Dockerfile
 actionlint                            # the workflows
 ```
 
-PowerShell is checked by PSScriptAnalyzer (`Invoke-ScriptAnalyzer -Path tests/e2e/windows/e2e.ps1 -Severity Warning, Error`). The `Invoke-Expression` in it runs the PowerShell that vfox prints for its hook, and is marked as such.
+The Go code is checked by `gofmt` and `go vet`. `GOOS=windows go vet` compiles the Windows build of the tests as well.
 
 ## License headers
 
-Every source file starts with the Apache 2.0 header of `.licenserc.yaml`. `apache/skywalking-eyes` checks it (`header check`), and `header fix` adds it to files that lack it. Markdown and JSON are not checked. PowerShell has a `<# #>` block header from `.license.tpl`, which `addlicense` checks: `addlicense -check -f .license.tpl tests/e2e/windows/*.ps1`.
+Every source file starts with the Apache 2.0 header of `.licenserc.yaml`. `apache/skywalking-eyes` checks it (`header check`), and `header fix` adds it to files that lack it. Markdown and JSON are not checked.
 
 ## Writing the docs
 

@@ -16,11 +16,11 @@ lib/util.lua                  索引、名字、排序和平台
 lib/detect_zig.lua            通过可执行文件和 lib/std 找到 zig 的安装
 tests/*_test.lua              离线的 hook 测试，由 vfox plugin test 运行
 tests/fixtures/index/         测试应答所用的两个索引的副本
-tests/e2e/linux/              Linux 端到端检查及运行它的 Dockerfile
-tests/e2e/windows/            Windows 端到端检查，使用 PowerShell 编写
+tests/e2e/                    端到端检查，一个同时用于 Linux 和 Windows 的 Go 测试
+tests/e2e/linux/Dockerfile    在容器中于 Linux 上运行它们的镜像
 Injection.lua                 vfox 注入对象的类型提示，从不加载
 stylua.toml、.luarc.json      格式化，以及 Lua 语言服务器的设置
-.licenserc.yaml、.license.tpl 许可证头
+.licenserc.yaml               许可证头
 opencode.jsonc                让本仓库中的 OpenCode 代理会话无需询问即可执行 git push、gh pr create 和 gh pr comment
 README.md、docs/              文档；README_CN.md 和 docs/zh-CN/ 是中文版本
 ```
@@ -71,16 +71,17 @@ vfox plugin test . --file tests/available_test.lua
 ```bash
 stylua --check .                      # StyLua 2.5.2，使用 stylua.toml
 lua-language-server --check . --checklevel=Warning   # LuaLS 3.19.1，使用 .luarc.json
-shellcheck tests/e2e/linux/e2e.sh
+gofmt -l tests/e2e                    # Go：无输出表示格式正确
+(cd tests/e2e && go vet ./... && GOOS=windows go vet ./...)   # Go：vet，同时检查 Linux 和 Windows
 hadolint < tests/e2e/linux/Dockerfile
 actionlint                            # 工作流
 ```
 
-PowerShell 由 PSScriptAnalyzer 检查（`Invoke-ScriptAnalyzer -Path tests/e2e/windows/e2e.ps1 -Severity Warning, Error`）。其中的 `Invoke-Expression` 执行 vfox 为其 hook 打印的 PowerShell 代码，并已注明理由。
+Go 代码由 `gofmt` 和 `go vet` 检查；`GOOS=windows go vet` 同时编译测试的 Windows 版本。
 
 ## 许可证头
 
-每个源文件开头都有 `.licenserc.yaml` 中的 Apache 2.0 许可证头。`apache/skywalking-eyes` 检查它（`header check`），`header fix` 为缺少它的文件补上。Markdown 和 JSON 不检查。PowerShell 使用 `.license.tpl` 中的 `<# #>` 块注释头，由 `addlicense` 检查：`addlicense -check -f .license.tpl tests/e2e/windows/*.ps1`。
+每个源文件开头都有 `.licenserc.yaml` 中的 Apache 2.0 许可证头。`apache/skywalking-eyes` 检查它（`header check`），`header fix` 为缺少它的文件补上。Markdown 和 JSON 不检查。
 
 ## 编写文档
 

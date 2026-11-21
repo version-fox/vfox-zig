@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# A throwaway Ubuntu with vfox installed, for running tests/e2e/linux/e2e.sh
-# locally. The checkout is mounted at run time, not copied in:
+# A throwaway image for running the end-to-end checks on Linux: the Go toolchain
+# that runs them, vfox 1.1.0, and xz for the system copy of zig. The checkout is
+# mounted at run time, not copied in:
 #   docker build -t zig-e2e tests/e2e/linux
 #   docker run --rm -v "$PWD:/src:ro" zig-e2e
-FROM ubuntu:26.04
+FROM golang:1.27.1
 
 # A failing step in a pipe fails the build.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -27,10 +28,10 @@ ARG VFOX_VERSION=1.1.0
 ARG VFOX_SHA256=3b33c3c468b27bc17aecf0d6d3af24fe49fe204972984904a136a47b402a0ee4
 
 # The base image is pinned by its tag, and a throwaway test image takes the
-# current Ubuntu packages, so the package versions are not pinned.
+# current Debian packages, so the package versions are not pinned.
 # hadolint ignore=DL3008
 RUN apt-get update \
-    && apt-get install --yes --no-install-recommends ca-certificates curl tar xz-utils zip unzip \
+    && apt-get install --yes --no-install-recommends ca-certificates curl xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
 RUN set -eux; \
@@ -42,5 +43,5 @@ RUN set -eux; \
         "vfox_${VFOX_VERSION}_linux_x86_64/vfox"; \
     rm "$archive"
 
-WORKDIR /work
-CMD ["bash", "/src/tests/e2e/linux/e2e.sh"]
+WORKDIR /src/tests/e2e
+CMD ["go", "test", "-v", "-count=1", "-timeout", "40m", "-run", "TestE2E", "."]

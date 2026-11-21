@@ -12,10 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# License header check (Apache SkyWalking Eyes): Lua, shell, YAML, Dockerfiles,
-# ignore files and similar text formats are covered. PowerShell is checked by
-# addlicense instead (see .github/workflows/license.yml and docs/e2e.md), as
-# eyes cannot fix a `<# ... #>` block comment.
+# License header check (Apache SkyWalking Eyes): Lua, Go, YAML, Dockerfiles,
+# ignore files and similar text formats are covered.
 header:
   license:
     spdx-id: Apache-2.0
@@ -45,9 +43,6 @@ header:
     - '.git'
     - '.tool-versions'
     - 'LICENSE'
-    # Plain-text template for addlicense: it has no comment markers, so its
-    # text must stay in sync with the `content` block above.
-    - '.license.tpl'
     - 'tests/fixtures/**'
 
   comment: on-failure

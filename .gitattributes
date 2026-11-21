@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Keep every checkout LF: stylua --check (line_endings = "Unix") and the shell
-# and Docker files are validated on Linux, and a Windows checkout must not
-# rewrite their line endings.
+# Keep every checkout LF: stylua --check (line_endings = "Unix") and gofmt
+# validate these files on Linux, and a Windows checkout must not rewrite their
+# line endings.
 * text=auto eol=lf

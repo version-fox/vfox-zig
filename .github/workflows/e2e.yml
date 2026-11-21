@@ -37,6 +37,9 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.27.1'
       # The same pinned vfox as tests/e2e/linux/Dockerfile and test.yml.
       - name: Install vfox
         env:
@@ -52,7 +55,8 @@ jobs:
             "vfox_${VFOX_VERSION}_linux_x86_64/vfox"
           echo "$RUNNER_TEMP/vfox" >> "$GITHUB_PATH"
       - name: Run the e2e checks on Linux
-        run: bash tests/e2e/linux/e2e.sh
+        working-directory: tests/e2e
+        run: go test -v -count=1 -timeout 40m -run TestE2E .
 
   e2e-windows:
     if: github.repository == 'version-fox/vfox-zig'
@@ -62,6 +66,9 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.27.1'
       - name: Install vfox
         shell: pwsh
         env:
@@ -80,4 +87,5 @@ jobs:
           Add-Content -Path $env:GITHUB_PATH -Value $exe.DirectoryName
       - name: Run the e2e checks on Windows
         shell: pwsh
-        run: pwsh -NoProfile -File tests/e2e/windows/e2e.ps1
+        working-directory: tests/e2e
+        run: go test -v -count=1 -timeout 50m -run TestE2E .

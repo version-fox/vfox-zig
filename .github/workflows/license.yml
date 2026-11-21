@@ -35,6 +35,3 @@ jobs:
         uses: apache/skywalking-eyes@v0.9.0
         with:
           config: .licenserc.yaml
-      # eyes cannot check the <# #> block comment of PowerShell, so addlicense does.
-      - name: Check PowerShell license headers
-        run: docker run --rm -v "${{ github.workspace }}:/src" -w /src ghcr.io/google/addlicense:v1.2.0 -check -f .license.tpl tests/e2e/windows/*.ps1

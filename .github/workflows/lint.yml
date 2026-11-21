@@ -40,20 +40,32 @@ jobs:
       - name: Check Lua
         run: mise x aqua:LuaLS/lua-language-server@3.19.1 -- lua-language-server --check . --checklevel=Warning
 
-  scripts:
+  go:
     if: github.repository == 'version-fox/vfox-zig'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Check the shell scripts
-        run: shellcheck tests/e2e/linux/e2e.sh
-      - name: Check the PowerShell scripts
-        shell: pwsh
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.27.1'
+      - name: Check gofmt
+        run: test -z "$(gofmt -l .)"
+      # GOOS=windows compiles the Windows build of the tests as well.
+      - name: Run go vet
+        working-directory: tests/e2e
         run: |
-          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
-          Invoke-ScriptAnalyzer -Path tests/e2e/windows/e2e.ps1 -Severity Warning, Error -EnableExit
+          go vet ./...
+          GOOS=windows go vet ./...
+
+  dockerfile:
+    if: github.repository == 'version-fox/vfox-zig'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Check the Dockerfile
         run: docker run --rm -i hadolint/hadolint:v2.15.1 < tests/e2e/linux/Dockerfile
 
