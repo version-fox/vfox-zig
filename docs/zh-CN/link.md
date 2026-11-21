@@ -13,7 +13,7 @@ vfox 会列出插件找到的安装，你选择要链接的。`vfox link --detec
 ## 会找什么
 
 - `PATH` 各目录里的 `zig`（Windows 上是 `zig.exe`），这包括 Homebrew、系统包，以及你自己设置的 `PATH` 条目。符号链接会被追踪到真正存放可执行文件的目录，所以链接到 `/usr/lib/zig/zig` 的 `/usr/bin/zig` 会被报告为 `/usr/lib/zig`。
-- 版本管理器：mise（`~/.local/share/mise/installs/zig`）、asdf（`~/.asdf/installs/zig`）和 zvm（`~/.zvm`）。它们为每个版本保存一个目录，插件也会再往下查一层。
+- 版本管理器（Linux 和 macOS）：mise（`~/.local/share/mise/installs/zig`）、asdf（`~/.asdf/installs/zig`）和 zvm（`~/.zvm`）。它们为每个版本保存一个目录；mise 和 asdf 还会再往下查一层，因为它们可能在版本目录里再放一层文件夹。Windows 上同样查找 mise（`%USERPROFILE%\.local\share\mise\installs\zig`）和 zvm（`%USERPROFILE%\.zvm`）。
 - Windows 上 Scoop 的应用（`%USERPROFILE%\scoop\apps\zig`）。
 - 系统目录：Linux 和 macOS 上的 `/usr/local`、`/opt`、`/usr/lib`，以及 Windows 上的 `C:\Program Files\zig`。每个目录本身及其下一层子目录都会被查找，所以 `/opt/zig-linux-x86_64-0.12.1` 能被找到。
 

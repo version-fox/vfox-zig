@@ -4,7 +4,7 @@
 
 每个版本中对用户可见的变化。GitHub 的 release 页面列出了提交记录。
 
-## 未发布
+## 0.1.2（2026-11-21）
 
 - `vfox link --detect zig` 可以纳入机器上已经装好的 Zig：包括 `PATH` 中的、版本管理器（mise、asdf、zvm、Scoop）中的，以及系统目录中的。需要 vfox 1.1.0 或更新的版本。见 [link.md](link.md)。
 - `vfox install zig@latest` 现在安装最新的正式版。以前它安装的是最新的 nightly：vfox 把 `vfox search zig` 的第一项当作 latest，而 nightly 排在最前面。现在正式版排在前面（从新到旧），开发版排在后面（从新到旧）。见 [versions.md](versions.md#列表和排序)。

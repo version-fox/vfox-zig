@@ -13,7 +13,7 @@ vfox lists what the plugin found and links what you pick. `vfox link --detect -y
 ## What it finds
 
 - Every `zig` (`zig.exe` on Windows) in the directories of `PATH`, which covers Homebrew, the system packages and the `PATH` entries you set up yourself. A symbolic link is followed to the directory that really holds the executable, so `/usr/bin/zig` that links to `/usr/lib/zig/zig` is reported as `/usr/lib/zig`.
-- The version managers: mise (`~/.local/share/mise/installs/zig`), asdf (`~/.asdf/installs/zig`) and zvm (`~/.zvm`). Each keeps a directory per version, and they are searched one level deeper too.
+- The version managers, on Linux and macOS: mise (`~/.local/share/mise/installs/zig`), asdf (`~/.asdf/installs/zig`) and zvm (`~/.zvm`). Each keeps a directory per version, and mise and asdf are searched one level deeper as well, since they can keep the zig in a folder inside a version's directory. On Windows, mise (`%USERPROFILE%\.local\share\mise\installs\zig`) and zvm (`%USERPROFILE%\.zvm`) are searched the same way.
 - Scoop's apps (`%USERPROFILE%\scoop\apps\zig`) on Windows.
 - The system directories: `/usr/local`, `/opt` and `/usr/lib` on Linux and macOS, and `C:\Program Files\zig` on Windows. Each is searched itself and one level below it, so `/opt/zig-linux-x86_64-0.12.1` is found.
 

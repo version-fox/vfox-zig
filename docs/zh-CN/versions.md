@@ -13,7 +13,7 @@
 | Zig 官方的 | https://ziglang.org/download/index.json | 是：正式版和 `master`（每日构建） |
 | Mach 的 | https://machengine.org/zig/index.json | 否：Mach 项目命名的构建 |
 
-`vfox search zig`、`vfox install` 和 `vfox use` 都会读取这两个索引。Mach 的索引是可选的：读不到时插件打印警告，只列出官方正式版，所以一个索引不可用不会让另一个也不能用。
+`vfox search zig` 和 `vfox install` 都会读取这两个索引；`vfox use` 只在名字既不是已安装的版本、也不是数字时才读取（见 [`vfox use`](#vfox-use)）。Mach 的索引是可选的：读不到时插件打印警告，只列出官方正式版，所以一个索引不可用不会让另一个也不能用。
 
 ## 名字
 
@@ -31,14 +31,14 @@
 
 `vfox search zig` 先列正式版（从新到旧），再列开发版（从新到旧）。vfox 把第一行当作 `zig@latest` 的版本，所以这个顺序保证 `latest` 是最新的正式版，而不是最新的 nightly。
 
-版本按语义化版本比较：`0.17.1` 排在 `0.17.0` 之前；开发版 `0.17.0-dev.2228+955228b68` 排在它的正式版 `0.17.0` 之后。
+版本按语义化版本比较：`0.17.1` 比 `0.17.0` 新；开发版 `0.17.0-dev.2228+955228b68` 比它的正式版 `0.17.0` 旧。
 
 每行的备注写出该构建的名字，多个名字用逗号分隔。同一个构建可以有多个名字，Mach 的构建就是这样：
 
 ```
+0.17.1                     latest
 0.18.0-dev.1260+833623422  nightly
 0.18.0-dev.935+ead8f5a7a   2026.10.22-mach, mach-latest
-0.17.1                     latest
 ```
 
 ## 下载地址与校验和
@@ -65,7 +65,7 @@
 
 - 已安装的版本号，例如 `zig@0.13.0`；以及裸的或带点的数字，例如 `zig@0.13`，由 vfox 在已安装的版本里自行匹配。
 
-其它名字 `latest`、`nightly` 和 Mach 名字需要到索引里查询，所以 `vfox use` 对它们需要网络。它们指向的版本在安装后会被选中。没有安装时，vfox 会报告它未安装，此时运行 `vfox install` 即可安装。
+其它名字 `latest`、`nightly` 和 Mach 名字需要到索引里查询，所以 `vfox use` 对它们需要网络。它们指向的版本一旦安装，`vfox use` 就会选中它。在此之前，vfox 会报告该名字未安装，此时运行 `vfox install` 即可安装。
 
 ## 平台
 
@@ -88,4 +88,4 @@
 | windows/arm64 | `aarch64-windows` |
 | windows/386 | `x86-windows`、`i386-windows` |
 
-表中没有的平台按它自己的 Go 名字查找。这些名字在 `lib/util.lua`（`arch_names`）中定义，`tests/util_test.lua` 对它们做了检查。
+表中没有的平台按它自己的 Go 名字查找。与 Go 名字不同的索引名字定义在 `lib/util.lua` 的 `arch_names` 中，`tests/util_test.lua` 对它们做了检查。

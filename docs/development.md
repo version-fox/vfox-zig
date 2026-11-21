@@ -89,7 +89,7 @@ The English pages are in `docs/` and the Chinese ones in `docs/zh-CN/` under the
 
 ## Changes
 
-`docs/changes.md` and `docs/zh-CN/changes.md` describe what changed for a user, under `Unreleased` until a release. A change in behaviour, a fix, or a new hook is listed there in both languages.
+`docs/changes.md` and `docs/zh-CN/changes.md` describe what changed for a user. A change in behaviour, a fix, or a new hook is listed there in both languages, under a `## Unreleased` heading at the top. The release replaces that heading with the version (see [After a release](#after-a-release)).
 
 ## Releasing
 
@@ -101,5 +101,5 @@ Pushing a version tag publishes too, when `PLUGIN.version` already matches the t
 
 The documentation marks what is newer than the last release with "Unreleased" ("未发布" in Chinese). Once the release is out:
 
-1. Move those entries in [changes.md](changes.md) under the new version, with the date of the release, in both languages: `grep -rn -i -e unreleased -e 未发布 docs README*`.
+1. Move those entries in [changes.md](changes.md) under a heading for the new version, with the date of the release (`## 0.1.2 (2026-11-21)`), in both languages, and remove the `Unreleased` heading. `grep -rn -i -e unreleased -e 未发布 docs README*` finds what is still marked; after the move, only the notes on these two pages match.
 2. Give the date of the index copies in `tests/fixtures/index/README.md` when they are refreshed, and check the examples in [versions.md](versions.md) against them.
