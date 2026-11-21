@@ -1,40 +1,29 @@
+-- Copyright 2026 Han Li and contributors
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--   http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 local util = require("util")
 
 --- Return all available versions provided by this plugin
 --- @param ctx table Empty table used as context, for future extension
 --- @return table Descriptions of available versions and accompanying tool descriptions
 function PLUGIN:Available(ctx)
-    local archs = util:getArchArr()
-    local os = util:getOsType()
-    local base = util:getResults(util.BaseUrl, archs, os, "tarball")
-    local mach = util:getResults(util.MachUrl, archs, os, "zigTarball")
-
-    --merge the two together
-    for k, v in pairs(mach) do
-        if v.note == "nightly" then
-            goto continue
-        end
-        if base[k] == nil then
-            base[k] = v
-        elseif base[k].note ~= "" then
-            base[k].note = base[k].note .. "|" .. v.note
-        end
-        ::continue::
-    end
-
-    -- Need an list to sort it
     local result = {}
-    for _, v in pairs(base) do
-        table.insert(result, v)
-    end
-    table.sort(result, function(a,b) return util:compare_versions(a,b) end)
-
-    -- Get the first non-noted version to dictate latest
-    for _, v in ipairs(result) do
-        if v.note == "" then
-            v.note = "latest"
-            break
-        end
+    for _, release in ipairs(util:releases()) do
+        table.insert(result, {
+            version = release.version,
+            note = table.concat(release.aliases, ", "),
+        })
     end
     return result
 end
