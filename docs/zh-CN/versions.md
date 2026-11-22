@@ -46,7 +46,7 @@
 每个构建从索引为该平台给出的地址下载：
 
 - Zig 的正式版和 nightly 从 ziglang.org 下载。
-- Mach 构建下载索引里的 `zigTarball`（ziglang.org）。大多数 Mach 构建已经不在 ziglang.org 上：按 2026 年 11 月 21 日的索引，十个构建中只有最新的 `2026.10.22-mach`（`mach-latest` 指的就是它）在 ziglang.org 上。其余构建的压缩包在 Mach 的软件包站点上，索引把地址写在 `tarball` 里。对这些构建，`vfox install` 会先用 HEAD 请求询问 ziglang.org，请求失败时改从 Mach 的软件包站点安装。
+- Mach 构建下载索引里的 `zigTarball`（ziglang.org）。大多数 Mach 构建已经不在 ziglang.org 上。按 2026 年 11 月 21 日的索引，十个构建中只有最新的 `2026.10.22-mach`（`mach-latest` 指的就是它）在 2026 年 11 月 22 日检查时还能从 ziglang.org 下载。其余构建的压缩包在 Mach 的软件包站点上，索引把地址写在 `tarball` 里。对这些构建，`vfox install` 会先用 HEAD 请求询问 ziglang.org，请求失败时改从 Mach 的软件包站点安装。
 
 每次下载都会按索引列出的 SHA-256 校验。vfox 会打印 `Verifying checksum`，压缩包不匹配时停止。Mach 构建的两个地址使用同一个校验和，所以无论从哪个地址下载，校验都成立。
 

@@ -46,7 +46,7 @@ vfox link --detect -y zig        # 不询问，全部链接
 
 ## 平台
 
-插件安装索引里为运行 vfox 的平台列出的构建。最新的正式版在 Linux 上列出 `x86_64`、`aarch64`、`x86`、`arm`、`riscv64`、`powerpc64le`、`s390x` 和 `loongarch64` 构建，在 macOS 上列出 `x86_64` 和 `aarch64`，在 Windows 上列出 `x86_64`、`aarch64` 和 `x86`。旧版本列出的平台较少。某个版本没有你所在平台的构建时，会提示它在该平台上未列出；查找时使用的名字见 [docs/zh-CN/versions.md](docs/zh-CN/versions.md#平台)。
+插件安装索引里为运行 vfox 的平台列出的构建。按 2026 年 11 月 21 日的索引，最新的正式版在 Linux 上列出 `x86_64`、`aarch64`、`x86`、`arm`、`riscv64`、`powerpc64le`、`s390x` 和 `loongarch64` 构建，在 macOS 上列出 `x86_64` 和 `aarch64`，在 Windows 上列出 `x86_64`、`aarch64` 和 `x86`。旧版本列出的平台较少。某个版本没有你所在平台的构建时，会提示它在该平台上未列出；查找时使用的名字见 [docs/zh-CN/versions.md](docs/zh-CN/versions.md#平台)。
 
 ## 文档
 

@@ -46,7 +46,7 @@ See [docs/link.md](docs/link.md).
 
 ## Platforms
 
-The plugin installs the build that the index lists for the platform vfox runs on. The latest releases list Linux builds for `x86_64`, `aarch64`, `x86`, `arm`, `riscv64`, `powerpc64le`, `s390x` and `loongarch64`, macOS builds for `x86_64` and `aarch64`, and Windows builds for `x86_64`, `aarch64` and `x86`. Older releases list fewer platforms. A version without a build for your platform is reported as not listed for it, and the list in [docs/versions.md](docs/versions.md#platforms) shows the names that are looked up.
+The plugin installs the build that the index lists for the platform vfox runs on. In the index of 2026-11-21, the latest release lists Linux builds for `x86_64`, `aarch64`, `x86`, `arm`, `riscv64`, `powerpc64le`, `s390x` and `loongarch64`, macOS builds for `x86_64` and `aarch64`, and Windows builds for `x86_64`, `aarch64` and `x86`. Older releases list fewer platforms. A version without a build for your platform is reported as not listed for it, and the list in [docs/versions.md](docs/versions.md#platforms) shows the names that are looked up.
 
 ## Documentation
 
