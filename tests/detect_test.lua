@@ -19,7 +19,7 @@ local plugin = test.load({
     env = {
         HOME = "/home/u",
         VFOX_HOME = "/srv/vfox",
-        PATH = "/usr/bin:/home/u/bin:/home/u/.asdf/shims:/home/u/.vfox/cache/zig/v-0.12.1/bin:/srv/vfox/bin:/srv/vfox-tools:/tmp/other/cache/zig/v-0.14.1/zig-0.14.1:relative/bin",
+        PATH = "/usr/bin:/home/u/bin:/home/u/.asdf/shims:/home/u/.vfox/cache/zig/v-0.12.1/bin:/srv/vfox/bin:/srv/VFox/bin:/srv/vfox-tools:/tmp/other/cache/zig/v-0.14.1/zig-0.14.1:relative/bin",
     },
 })
 
@@ -116,6 +116,9 @@ add_zig("/srv/vfox/bin", "0.16.0")
 add_zig("/tmp/other/cache/zig/v-0.14.1/zig-0.14.1", "0.14.1")
 -- VFOX_HOME ends at a separator: a directory that only starts with its letters is not in it.
 add_zig("/srv/vfox-tools", "0.15.0")
+-- On Linux the file system is case-sensitive: a directory that differs from VFOX_HOME
+-- only in letter case is another directory, so it is reported.
+add_zig("/srv/VFox/bin", "0.15.1")
 
 -- mise keeps a directory per version; a second level is searched too.
 local mise = "/home/u/.local/share/mise/installs/zig"
@@ -141,6 +144,7 @@ local expected = {
     "0.13.0 /usr/lib/zig (on PATH)",
     "0.14.0-dev.2577+271452d22 /home/u/.local/share/mise/installs/zig/0.14.0-dev.2577+271452d22 (installed by mise)",
     "0.15.0 /srv/vfox-tools (on PATH)",
+    "0.15.1 /srv/VFox/bin (on PATH)",
 }
 assert(
     #lines == #expected,
@@ -148,6 +152,26 @@ assert(
 )
 for i, line in ipairs(expected) do
     assert(lines[i] == line, ("installation %d: expected %s, got %s"):format(i, line, lines[i]))
+end
+
+-- macOS's file system ignores case by default, so there /srv/VFox/bin is the
+-- directory of VFOX_HOME, and it is left out as it is on Windows.
+local original_os = RUNTIME.osType
+RUNTIME.osType = "darwin"
+local on_macos = {}
+for _, item in ipairs(plugin:Detect({})) do
+    table.insert(on_macos, item.version .. " " .. item.path .. " (" .. item.note .. ")")
+end
+RUNTIME.osType = original_os
+local without_variant = {}
+for _, line in ipairs(expected) do
+    if line ~= "0.15.1 /srv/VFox/bin (on PATH)" then
+        table.insert(without_variant, line)
+    end
+end
+for i = 1, math.max(#on_macos, #without_variant) do
+    local want, got = without_variant[i], on_macos[i]
+    assert(got == want, ("on macOS, installation %d: expected %s, got %s"):format(i, tostring(want), tostring(got)))
 end
 
 print("detect tests passed")

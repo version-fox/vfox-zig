@@ -161,12 +161,30 @@ local function parent(path)
     return dir
 end
 
+--- Whether the file system ignores letter case, so that two names differing only in
+--- case are one directory: Windows, and macOS, whose file system ignores case by
+--- default. On Linux they are two directories, and names are compared as spelled.
+local function ignores_case()
+    return is_windows() or (RUNTIME ~= nil and RUNTIME.osType == "darwin")
+end
+
+--- Returns the path in lower case where the file system ignores case, and unchanged
+--- otherwise, so that a comparison of paths follows the file system.
+--- @param path string
+--- @return string
+local function fold(path)
+    if ignores_case() then
+        return path:lower()
+    end
+    return path
+end
+
 --- Returns VFOX_HOME, the directory vfox keeps its installs in when the variable
---- is set, or nil. It is in lower case, with forward slashes and no trailing slash,
---- so a directory can be compared with it as PATH spells it.
+--- is set, or nil. It has forward slashes and no trailing slash, so a directory can
+--- be compared with it as PATH spells it, and it is folded as paths are (see fold).
 local function vfox_home()
     local value = trim(os.getenv("VFOX_HOME") or "")
-    value = (value:lower():gsub("\\", "/"):gsub("/+$", ""))
+    value = fold((value:gsub("\\", "/"):gsub("/+$", "")))
     if value == "" then
         return nil
     end
@@ -180,21 +198,21 @@ end
 --- cache/zig/v-<version>. That layout is recognized in any home, so a zig that vfox
 --- made under another VFOX_HOME is left out too.
 local function skipped(dir)
-    local lower = dir:lower()
-    if lower:find("[/\\]%.vfox[/\\]") or lower:find("[/\\]cache[/\\]zig[/\\]v%-") then
+    local folded = fold(dir)
+    if folded:find("[/\\]%.vfox[/\\]") or folded:find("[/\\]cache[/\\]zig[/\\]v%-") then
         return true
     end
     local home = vfox_home()
     if home ~= nil then
-        local path = (lower:gsub("\\", "/"))
+        local path = (folded:gsub("\\", "/"))
         if path == home or path:sub(1, #home + 1) == home .. "/" then
             return true
         end
     end
-    if lower:match("[/\\]shims$") or lower:find("[/\\]shims[/\\]") then
+    if folded:match("[/\\]shims$") or folded:find("[/\\]shims[/\\]") then
         return true
     end
-    return lower:match("chocolatey[/\\]bin$") ~= nil
+    return folded:match("chocolatey[/\\]bin$") ~= nil
 end
 
 --- Returns the directories of PATH that are absolute, without quotes.

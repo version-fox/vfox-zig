@@ -4,6 +4,10 @@
 
 每个版本中对用户可见的变化。GitHub 的 release 页面列出了提交记录。
 
+## 未发布
+
+- 在 Linux 上，`vfox link --detect zig` 会列出目录名与 `VFOX_HOME` 只在大小写上不同的 Zig，例如 `VFOX_HOME` 为 `/srv/vfox` 时的 `/srv/VFox/bin`。以前它被当作 vfox 自己的安装而漏掉。Linux 的文件系统区分大小写，这两者是不同的目录。Windows 和 macOS（默认设置）的文件系统不区分大小写，比较仍然忽略大小写。见 [link.md](link.md)。
+
 ## 0.1.3（2026-11-22）
 
 - `vfox link --detect zig` 不再列出 vfox 在自定义 `VFOX_HOME` 下安装的 Zig，也不列出 vfox 在其它主目录中安装的 Zig。以前它们会被当作机器上已有的 Zig。见 [link.md](link.md)。
