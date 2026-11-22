@@ -32,6 +32,8 @@ These are left out:
 - relative entries on `PATH`;
 - a version that is already installed or linked, and a second copy of a version that was found already (the first one found is kept, and `PATH` comes first).
 
+The checks for vfox's own installs and for shim directories ignore letter case on Windows and macOS, whose file systems ignore case by default. Everywhere else, Linux included, names are compared as spelled: `/srv/VFox/bin` is not inside `VFOX_HOME=/srv/vfox`, so a zig there is reported.
+
 A copy without its `lib/std` is left out, because zig could not find its library there and linking it would give a broken `zig`.
 
 ## Linking by hand
