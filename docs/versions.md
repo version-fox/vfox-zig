@@ -13,7 +13,7 @@ The plugin reads two indexes:
 | Zig's | https://ziglang.org/download/index.json | yes: the official releases and `master`, the nightly |
 | Mach's | https://machengine.org/zig/index.json | no: the builds that the Mach project names |
 
-`vfox search zig` and `vfox install` read both, and `vfox use` reads them only for a name that is neither an installed version nor a number (see [`vfox use`](#vfox-use)). Mach's index is optional: when it cannot be read, the plugin prints a warning and lists the official releases alone, so an outage of one index does not stop the other from working.
+`vfox search zig` and `vfox install` read both, and `vfox use` reads them only for a name that is neither an installed version nor a number (see [`vfox use`](#vfox-use)). Mach's index is optional: when it cannot be read, the plugin prints a warning on standard error and lists the official releases alone, so an outage of one index does not stop the other from working.
 
 ## Names
 
@@ -46,7 +46,7 @@ The note on each line gives the names the build has, separated by commas. One bu
 Each build downloads from the address its index gives for the platform:
 
 - A Zig release or nightly downloads from ziglang.org.
-- A Mach build downloads from the address the index gives as `zigTarball` (ziglang.org). Some old development builds are no longer on ziglang.org, and the index also lists them on Mach's package host, under `tarball`. For those builds, `vfox install` asks ziglang.org for the archive with a HEAD request first, and installs from Mach's package host when that request fails.
+- A Mach build downloads from the address the index gives as `zigTarball` (ziglang.org). Most Mach builds are not on ziglang.org: in the index of 2026-11-21, ziglang.org has only the newest of the ten, `2026.10.22-mach`, which `mach-latest` names. For the others, the index also gives the archive on Mach's package host, under `tarball`. For those builds, `vfox install` asks ziglang.org for the archive with a HEAD request first, and installs from Mach's package host when that request fails.
 
 Every download is checked against the SHA-256 that the index lists for it. vfox prints `Verifying checksum` and stops if the archive does not match. Both addresses of a Mach build carry the same checksum, so the check holds whichever one the archive came from.
 
@@ -55,7 +55,7 @@ Every download is checked against the SHA-256 that the index lists for it. vfox 
 | What you see | Why | What to do |
 | --- | --- | --- |
 | `zig 9.9.9 is not listed for linux/amd64` | the index has no build of that name for your platform | run `vfox search zig`; the platform is in the message |
-| `No version given` | `vfox install zig` was run without a name | give a name, such as `zig@latest` |
+| `install requires specifying a version for zig` | `vfox install zig` was run without a name | give a name, such as `zig@latest` |
 | `WARNING: cannot download https://machengine.org/zig/index.json: ...; listing the official releases only` | Mach's index could not be read | check the network; the official releases still work |
 | `cannot download https://ziglang.org/download/index.json: ...` | Zig's index could not be read, so nothing can be listed or installed | check the network, and that ziglang.org is reachable |
 

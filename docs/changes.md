@@ -4,6 +4,11 @@
 
 What changed in each release, as a user notices it. GitHub's release pages list the commits.
 
+## Unreleased
+
+- `vfox link --detect zig` leaves out the zig that vfox installed under a custom `VFOX_HOME`, and the ones that vfox made under another home. Before, they were offered as zig installs already on the machine. See [link.md](link.md).
+- The warnings about an index that cannot be read go to standard error. Before, they went to standard output, so the warning about Mach's index came first in `vfox search zig | head -1`.
+
 ## 0.1.2 (2026-11-21)
 
 - `vfox link --detect zig` links the Zig installs that are already on the machine: those on `PATH`, in the version managers (mise, asdf, zvm, Scoop) and in the system directories. It needs vfox 1.1.0 or later. See [link.md](link.md).
