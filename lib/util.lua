@@ -110,6 +110,14 @@ function util.is_prerelease(version)
     return #identifiers > 0
 end
 
+--- Writes a warning on standard error. Standard output carries the result of a
+--- command, such as the list of `vfox search zig`, so a warning written there
+--- would be read as part of it.
+--- @param message string
+function util.warn(message)
+    io.stderr:write(message, "\n")
+end
+
 --- Downloads an index and decodes it. The error names the URL and the reason,
 --- without the position in this file that error would add (level 0), since it
 --- is shown to the user as it stands.
@@ -239,8 +247,8 @@ end
 --- release and not the newest nightly. Each build carries the names it has:
 --- `latest` on the newest release, `nightly`, and the Mach names.
 --- Mach's index is optional. When it cannot be read, the official releases
---- are listed alone, with a warning, so one unreachable index does not stop
---- every install.
+--- are listed alone, with a warning on standard error, so one unreachable index
+--- does not stop every install.
 --- @return table list of { version, url, sha256, aliases }
 function util:releases()
     local archs = self:getArchArr()
@@ -255,7 +263,7 @@ function util:releases()
     if ok then
         add_builds(releases, util.platform_builds(mach, archs, os_type, "zigTarball", { master = true }))
     else
-        print("WARNING: " .. tostring(mach) .. "; listing the official releases only")
+        util.warn("WARNING: " .. tostring(mach) .. "; listing the official releases only")
     end
 
     local list = {}

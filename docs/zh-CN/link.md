@@ -27,7 +27,7 @@ vfox 会列出插件找到的安装，你选择要链接的。`vfox link --detec
 
 下面这些会被跳过：
 
-- vfox 自己的安装，它们位于 `.vfox` 目录下；
+- vfox 自己的安装：它的主目录下的一切（设置了 `VFOX_HOME` 时为该目录，否则为 `.vfox` 目录），以及任何 `cache/zig/v-<版本>` 目录，那是 vfox 保存每个安装的位置，不论它是在哪个主目录中安装的；
 - shim 目录，例如 `~/.asdf/shims`、`~/.local/share/mise/shims`，或 Chocolatey 的 `bin`。shim 运行的是管理器当前选中的版本，而不是旁边的那一个；
 - `PATH` 中的相对路径条目；
 - 已经安装或已经链接的版本，以及同一版本的第二份副本（保留先找到的那一个，而 `PATH` 排在最前）。

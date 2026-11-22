@@ -19,7 +19,8 @@ local plugin = test.load({
     env = {
         USERPROFILE = "C:\\Users\\u",
         ProgramFiles = "C:\\Program Files",
-        PATH = "C:\\Tools;C:\\Users\\u\\scoop\\shims;C:\\Users\\u\\.vfox\\cache\\zig\\v-0.12.0;C:\\Zig;C:\\Program Files (x86)\\Zig",
+        VFOX_HOME = "D:\\VFox\\",
+        PATH = "C:\\Tools;C:\\Users\\u\\scoop\\shims;C:\\Users\\u\\.vfox\\cache\\zig\\v-0.12.0;C:\\Zig;C:\\Program Files (x86)\\Zig;D:\\vfox\\bin;D:\\vfox-tools",
     },
 })
 
@@ -98,6 +99,10 @@ add_zig("C:\\Users\\u\\.vfox\\cache\\zig\\v-0.12.0", "0.12.0")
 add_zig("C:\\Zig", "0.14.0-dev.1+abc123")
 -- A zig in a directory whose name has parentheses, which cmd.exe reads specially.
 add_zig("C:\\Program Files (x86)\\Zig", "0.9.0")
+-- VFOX_HOME is written with a trailing separator and in capitals. Its directories
+-- are vfox's, and a directory that only starts with the same letters is not.
+add_zig("D:\\vfox\\bin", "0.16.0")
+add_zig("D:\\vfox-tools", "0.15.0")
 
 -- Scoop: current and a version folder hold the same zig; the first listed wins.
 children[norm("C:\\Users\\u\\scoop\\apps\\zig")] = { "0.11.0", "current" }
@@ -118,6 +123,7 @@ local expected = {
     "0.11.0 C:\\Users\\u\\scoop\\apps\\zig\\0.11.0 (installed by Scoop)",
     "0.13.0 C:\\Tools (on PATH)",
     "0.14.0-dev.1+abc123 C:\\Zig (on PATH)",
+    "0.15.0 D:\\vfox-tools (on PATH)",
 }
 assert(
     #lines == #expected,

@@ -138,24 +138,36 @@ for i, item in ipairs(list) do
 end
 
 -- Mach's index is optional: when it cannot be read, the official releases are
--- still listed, with a warning that names what failed.
+-- still listed, with a warning that names what failed. The warning goes to
+-- standard error, and nothing is printed to standard output, where the list is.
 local warnings = {}
+local printed = {}
+local original_stderr = io.stderr
 local original_print = print
 print = function(...)
-    table.insert(warnings, table.concat({ ... }, " "))
+    table.insert(printed, table.concat({ ... }, " "))
 end
+io.stderr = {
+    write = function(_, ...)
+        table.insert(warnings, table.concat({ ... }))
+    end,
+}
 failures[MACH_URL] = true
 local official = listing()
 failures[MACH_URL] = nil
+io.stderr = original_stderr
 print = original_print
+assert(#printed == 0, "nothing is printed to standard output: " .. table.concat(printed, "; "))
 assert(#warnings == 1, "one warning when Mach cannot be read, got " .. #warnings)
+assert(warnings[1]:sub(-1) == "\n", "the warning is a line of its own: " .. warnings[1])
+local warning = warnings[1]:sub(1, -2)
 -- vfox wraps the transport's error, so the test matches its parts, not the whole text.
 assert(
-    warnings[1]:find("WARNING: cannot download " .. MACH_URL .. ":", 1, true) == 1,
-    "the warning names the Mach index: " .. warnings[1]
+    warning:find("WARNING: cannot download " .. MACH_URL .. ":", 1, true) == 1,
+    "the warning names the Mach index: " .. warning
 )
-assert(warnings[1]:find("connection refused", 1, true), "the warning gives the reason: " .. warnings[1])
-assert(warnings[1]:find("; listing the official releases only$"), "the warning says what is listed: " .. warnings[1])
+assert(warning:find("connection refused", 1, true), "the warning gives the reason: " .. warning)
+assert(warning:find("; listing the official releases only$"), "the warning says what is listed: " .. warning)
 position(official, "0.17.1")
 for _, item in ipairs(official) do
     assert(not item.note:find("mach", 1, true), "no Mach name without the Mach index: " .. item.note)

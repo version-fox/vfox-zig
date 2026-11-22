@@ -27,7 +27,7 @@ A directory is reported when all of these hold:
 
 These are left out:
 
-- vfox's own installs, which are under a `.vfox` directory;
+- vfox's own installs: everything under its home directory, which is `VFOX_HOME` when that is set and a `.vfox` directory otherwise, and any `cache/zig/v-<version>` directory, where vfox keeps each install, whichever home it was made in;
 - shim directories, such as `~/.asdf/shims`, `~/.local/share/mise/shims`, or Chocolatey's `bin`. A shim runs whichever version the manager selected, not the one beside it;
 - relative entries on `PATH`;
 - a version that is already installed or linked, and a second copy of a version that was found already (the first one found is kept, and `PATH` comes first).

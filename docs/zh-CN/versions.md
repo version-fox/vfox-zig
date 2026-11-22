@@ -13,7 +13,7 @@
 | Zig 官方的 | https://ziglang.org/download/index.json | 是：正式版和 `master`（每日构建） |
 | Mach 的 | https://machengine.org/zig/index.json | 否：Mach 项目命名的构建 |
 
-`vfox search zig` 和 `vfox install` 都会读取这两个索引；`vfox use` 只在名字既不是已安装的版本、也不是数字时才读取（见 [`vfox use`](#vfox-use)）。Mach 的索引是可选的：读不到时插件打印警告，只列出官方正式版，所以一个索引不可用不会让另一个也不能用。
+`vfox search zig` 和 `vfox install` 都会读取这两个索引；`vfox use` 只在名字既不是已安装的版本、也不是数字时才读取（见 [`vfox use`](#vfox-use)）。Mach 的索引是可选的：读不到时插件在标准错误输出上打印警告，只列出官方正式版，所以一个索引不可用不会让另一个也不能用。
 
 ## 名字
 
@@ -46,7 +46,7 @@
 每个构建从索引为该平台给出的地址下载：
 
 - Zig 的正式版和 nightly 从 ziglang.org 下载。
-- Mach 构建下载索引里的 `zigTarball`（ziglang.org）。有些旧的开发版已经不在 ziglang.org 上，索引同时在 Mach 的软件包站点上列出了它们，地址是 `tarball`。对这类构建，`vfox install` 会先用 HEAD 请求询问 ziglang.org，请求失败时改从 Mach 的软件包站点安装。
+- Mach 构建下载索引里的 `zigTarball`（ziglang.org）。大多数 Mach 构建已经不在 ziglang.org 上：按 2026 年 11 月 21 日的索引，十个构建中只有最新的 `2026.10.22-mach`（`mach-latest` 指的就是它）在 ziglang.org 上。其余构建的压缩包在 Mach 的软件包站点上，索引把地址写在 `tarball` 里。对这些构建，`vfox install` 会先用 HEAD 请求询问 ziglang.org，请求失败时改从 Mach 的软件包站点安装。
 
 每次下载都会按索引列出的 SHA-256 校验。vfox 会打印 `Verifying checksum`，压缩包不匹配时停止。Mach 构建的两个地址使用同一个校验和，所以无论从哪个地址下载，校验都成立。
 
@@ -55,7 +55,7 @@
 | 你看到的 | 原因 | 怎么办 |
 | --- | --- | --- |
 | `zig 9.9.9 is not listed for linux/amd64` | 索引里没有这个名字在你的平台上的构建 | 运行 `vfox search zig`；消息里写着平台 |
-| `No version given` | 运行 `vfox install zig` 时没有给出名字 | 给出名字，例如 `zig@latest` |
+| `install requires specifying a version for zig` | 运行 `vfox install zig` 时没有给出名字 | 给出名字，例如 `zig@latest` |
 | `WARNING: cannot download https://machengine.org/zig/index.json: ...; listing the official releases only` | 读不到 Mach 的索引 | 检查网络；官方正式版仍然可用 |
 | `cannot download https://ziglang.org/download/index.json: ...` | 读不到 Zig 的索引，因此无法列出或安装任何版本 | 检查网络，以及 ziglang.org 能否访问 |
 

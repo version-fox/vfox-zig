@@ -4,6 +4,11 @@
 
 每个版本中对用户可见的变化。GitHub 的 release 页面列出了提交记录。
 
+## 未发布
+
+- `vfox link --detect zig` 不再列出 vfox 在自定义 `VFOX_HOME` 下安装的 Zig，也不列出 vfox 在其它主目录中安装的 Zig。以前它们会被当作机器上已有的 Zig。见 [link.md](link.md)。
+- 读不到索引时的警告改为写到标准错误。以前它们写到标准输出，所以 `vfox search zig | head -1` 得到的第一行是关于 Mach 索引的警告。
+
 ## 0.1.2（2026-11-21）
 
 - `vfox link --detect zig` 可以纳入机器上已经装好的 Zig：包括 `PATH` 中的、版本管理器（mise、asdf、zvm、Scoop）中的，以及系统目录中的。需要 vfox 1.1.0 或更新的版本。见 [link.md](link.md)。
