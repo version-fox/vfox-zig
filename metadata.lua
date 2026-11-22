@@ -19,7 +19,7 @@ PLUGIN = {}
 --- Plugin name
 PLUGIN.name = "zig"
 --- Plugin version
-PLUGIN.version = "0.1.2"
+PLUGIN.version = "0.1.3"
 --- Plugin homepage
 PLUGIN.homepage = "https://github.com/version-fox/vfox-zig"
 --- Plugin license, please choose a correct license according to your needs.
