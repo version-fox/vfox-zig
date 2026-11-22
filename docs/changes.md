@@ -4,7 +4,7 @@
 
 What changed in each release, as a user notices it. GitHub's release pages list the commits.
 
-## Unreleased
+## 0.1.4 (2026-11-22)
 
 - On Linux, `vfox link --detect zig` lists a zig whose directory differs from `VFOX_HOME` only in letter case, such as `/srv/VFox/bin` when `VFOX_HOME` is `/srv/vfox`. Before, it was left out as vfox's own install. Linux file systems tell such names apart, so they are two directories. Windows and macOS, whose file systems ignore case by default, still compare the names without regard to case. See [link.md](link.md).
 
