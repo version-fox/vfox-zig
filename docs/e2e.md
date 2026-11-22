@@ -44,7 +44,7 @@ The test runs these checks as subtests, in this order, and stops at the first fa
 3. `vfox install zig@0.13.0` verifies the download against its checksum (`Verifying checksum`), and `zig` then reports `0.13.0`.
 4. The standard library is found from the installed zig: a program that prints with `std.debug.print` compiles and runs.
 5. `vfox install zig@latest` installs the release that the search marks `latest`, and `zig@latest` selects it with `vfox use`. This is the check that `latest` is the newest official release, not the newest nightly.
-6. `vfox install zig@2024.11.0-mach` installs a Mach build by its name, and `vfox use` selects it. The build is no longer on ziglang.org, so its download comes from the address the index lists for Mach's package host.
+6. `vfox install zig@2024.11.0-mach` installs a Mach build by its name, and `vfox use` selects it. The build is no longer on ziglang.org (checked on 2026-11-22), so its download comes from the address the index lists for Mach's package host.
 7. `vfox install zig@9.9.9` fails, and names the platform it looked for.
 8. A zig that vfox did not install is linked with `vfox link --detect -y zig`. The copy is on `PATH` for the run. The list shows the link, `vfox use` selects the linked zig, a second `link --detect` finds nothing new, and `vfox uninstall` removes the link and leaves the copy in place.
 
@@ -52,7 +52,7 @@ On Linux and macOS, vfox refuses to change the version unless its shell hook is 
 
 ## Network use
 
-Each run downloads about 200 MB: the indexes from ziglang.org and machengine.org, zig 0.13.0 and 0.17.1 and the Mach build from ziglang.org or Mach's package host, and zig 0.12.1 (for the system copy) from ziglang.org. vfox itself is downloaded from GitHub in CI.
+Each run downloads about 200 MB: the indexes from ziglang.org and machengine.org, zig 0.13.0, the latest release and the Mach build from ziglang.org or Mach's package host, and zig 0.12.1 (for the system copy) from ziglang.org. vfox itself is downloaded from GitHub in CI.
 
 A vfox command whose output reports a timeout is run again, up to three times in all, because the indexes and the downloads come over the network. Any other failure stops the run at once.
 

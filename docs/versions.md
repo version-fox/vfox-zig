@@ -46,7 +46,7 @@ The note on each line gives the names the build has, separated by commas. One bu
 Each build downloads from the address its index gives for the platform:
 
 - A Zig release or nightly downloads from ziglang.org.
-- A Mach build downloads from the address the index gives as `zigTarball` (ziglang.org). Most Mach builds are not on ziglang.org: in the index of 2026-11-21, ziglang.org has only the newest of the ten, `2026.10.22-mach`, which `mach-latest` names. For the others, the index also gives the archive on Mach's package host, under `tarball`. For those builds, `vfox install` asks ziglang.org for the archive with a HEAD request first, and installs from Mach's package host when that request fails.
+- A Mach build downloads from the address the index gives as `zigTarball` (ziglang.org). Most Mach builds are not on ziglang.org. Of the ten in the index of 2026-11-21, only the newest, `2026.10.22-mach`, which `mach-latest` names, was on ziglang.org when checked on 2026-11-22. For the others, the index also gives the archive on Mach's package host, under `tarball`. For those builds, `vfox install` asks ziglang.org for the archive with a HEAD request first, and installs from Mach's package host when that request fails.
 
 Every download is checked against the SHA-256 that the index lists for it. vfox prints `Verifying checksum` and stops if the archive does not match. Both addresses of a Mach build carry the same checksum, so the check holds whichever one the archive came from.
 
