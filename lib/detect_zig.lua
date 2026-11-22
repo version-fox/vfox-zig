@@ -161,13 +161,35 @@ local function parent(path)
     return dir
 end
 
---- Whether a directory must not be linked: the installs vfox manages, and the
---- shim directories of version managers. A shim runs whichever version the
---- manager has selected, not the one that sits beside it.
+--- Returns VFOX_HOME, the directory vfox keeps its installs in when the variable
+--- is set, or nil. It is in lower case, with forward slashes and no trailing slash,
+--- so a directory can be compared with it as PATH spells it.
+local function vfox_home()
+    local value = trim(os.getenv("VFOX_HOME") or "")
+    value = (value:lower():gsub("\\", "/"):gsub("/+$", ""))
+    if value == "" then
+        return nil
+    end
+    return value
+end
+
+--- Whether a directory must not be linked: vfox's own installs, and the shim
+--- directories of version managers. A shim runs whichever version the manager has
+--- selected, not the one that sits beside it. vfox keeps its installs under its
+--- home, which is VFOX_HOME when that is set and .vfox otherwise, and each one in
+--- cache/zig/v-<version>. That layout is recognized in any home, so a zig that vfox
+--- made under another VFOX_HOME is left out too.
 local function skipped(dir)
     local lower = dir:lower()
-    if lower:find("[/\\]%.vfox[/\\]") then
+    if lower:find("[/\\]%.vfox[/\\]") or lower:find("[/\\]cache[/\\]zig[/\\]v%-") then
         return true
+    end
+    local home = vfox_home()
+    if home ~= nil then
+        local path = (lower:gsub("\\", "/"))
+        if path == home or path:sub(1, #home + 1) == home .. "/" then
+            return true
+        end
     end
     if lower:match("[/\\]shims$") or lower:find("[/\\]shims[/\\]") then
         return true

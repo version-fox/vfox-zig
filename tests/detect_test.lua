@@ -18,7 +18,8 @@ local plugin = test.load({
     arch = "amd64",
     env = {
         HOME = "/home/u",
-        PATH = "/usr/bin:/home/u/bin:/home/u/.asdf/shims:/home/u/.vfox/cache/zig/v-0.12.1/bin:relative/bin",
+        VFOX_HOME = "/srv/vfox",
+        PATH = "/usr/bin:/home/u/bin:/home/u/.asdf/shims:/home/u/.vfox/cache/zig/v-0.12.1/bin:/srv/vfox/bin:/srv/vfox-tools:/tmp/other/cache/zig/v-0.14.1/zig-0.14.1:relative/bin",
     },
 })
 
@@ -108,6 +109,13 @@ add_zig("/home/u/.asdf/shims", "0.11.0")
 add_zig("/home/u/.vfox/cache/zig/v-0.12.1/bin", "0.12.1")
 -- Relative PATH entries are not reported.
 add_zig("relative/bin", "0.10.5")
+-- A zig in VFOX_HOME is vfox's, whatever its layout.
+add_zig("/srv/vfox/bin", "0.16.0")
+-- vfox's install layout is recognized in any home, so a zig that vfox made under
+-- another VFOX_HOME is not offered either.
+add_zig("/tmp/other/cache/zig/v-0.14.1/zig-0.14.1", "0.14.1")
+-- VFOX_HOME ends at a separator: a directory that only starts with its letters is not in it.
+add_zig("/srv/vfox-tools", "0.15.0")
 
 -- mise keeps a directory per version; a second level is searched too.
 local mise = "/home/u/.local/share/mise/installs/zig"
@@ -132,6 +140,7 @@ local expected = {
     "0.10.0 /usr/local/zig-x86_64-linux-0.10.0 (system directory)",
     "0.13.0 /usr/lib/zig (on PATH)",
     "0.14.0-dev.2577+271452d22 /home/u/.local/share/mise/installs/zig/0.14.0-dev.2577+271452d22 (installed by mise)",
+    "0.15.0 /srv/vfox-tools (on PATH)",
 }
 assert(
     #lines == #expected,
