@@ -33,7 +33,7 @@ function PLUGIN:PreUse(ctx)
     end
     local ok, releases = pcall(util.releases, util)
     if not ok then
-        print("WARNING: cannot resolve " .. input .. " from the index: " .. tostring(releases))
+        util.warn("WARNING: cannot resolve " .. input .. " from the index: " .. tostring(releases))
         return nil
     end
     local release = util.find_release(releases, input)

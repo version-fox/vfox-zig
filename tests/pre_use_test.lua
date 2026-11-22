@@ -93,20 +93,30 @@ assert(nightly.version == "0.18.0-dev.1260+833623422", "nightly selects its inst
 local mach = plugin:PreUse({ version = "2024.11.0-mach", installedSdks = installed("0.14.0-dev.2577+271452d22") })
 assert(mach.version == "0.14.0-dev.2577+271452d22", "a Mach name selects its build")
 
--- When the index cannot be read, `use` leaves the name to vfox, with a warning.
+-- When the index cannot be read, `use` leaves the name to vfox, with a warning on
+-- standard error. Nothing is printed to standard output.
 local warnings = {}
+local printed = {}
+local original_stderr = io.stderr
 local original_print = print
 print = function(...)
-    table.insert(warnings, table.concat({ ... }, " "))
+    table.insert(printed, table.concat({ ... }, " "))
 end
+io.stderr = {
+    write = function(_, ...)
+        table.insert(warnings, table.concat({ ... }))
+    end,
+}
 failures[ZIG_URL] = true
 local offline = plugin:PreUse({ version = "latest", installedSdks = installed("0.17.1") })
 failures[ZIG_URL] = nil
+io.stderr = original_stderr
 print = original_print
 assert(offline == nil, "no selection without the index")
+assert(#printed == 0, "nothing is printed to standard output: " .. table.concat(printed, "; "))
 assert(
     #warnings == 1 and warnings[1]:find("cannot resolve latest", 1, true),
-    "a warning names the name: " .. tostring(warnings[1])
+    "a warning on standard error names the name: " .. tostring(warnings[1])
 )
 
 print("pre_use tests passed")
